@@ -21,14 +21,27 @@ class OnboardingCoordinator: Coordinator {
 private extension OnboardingCoordinator {
     func showOnboarding() {
         var pages = [UIViewController]()
-        let firstVc = UIViewController()
-        firstVc.view.backgroundColor = .purple
-        let secondVc = UIViewController()
-        secondVc.view.backgroundColor = .blue
-        let thirdVc = UIViewController()
-        thirdVc.view.backgroundColor = .yellow
-        let fourthVc = UIViewController()
-        fourthVc.view.backgroundColor = .green
+       
+        let firstVc = OnboardingPartViewController()
+        firstVc.titleText = "Delicious Food"
+        firstVc.image = UIImage(resource: .leg)
+        firstVc.descrionText = "Lorem ipsum dolor sit amet"
+        
+        let secondVc = OnboardingPartViewController()
+        secondVc.titleText = "Fast Shipping"
+        secondVc.image = UIImage(resource: .snipped)
+        secondVc.descrionText = "Lorem ipsum dolor sit amet"
+        
+        let thirdVc = OnboardingPartViewController()
+        thirdVc.titleText = "Certificate Food"
+        thirdVc.image = UIImage(resource: .medal)
+        thirdVc.descrionText = "Lorem ipsum dolor sit amet"
+        
+        let fourthVc = OnboardingPartViewController()
+        fourthVc.titleText = "Payment Online"
+        fourthVc.image = UIImage(resource: .card)
+        fourthVc.descrionText = "Lorem ipsum dolor sit amet"
+       
         
         pages.append(firstVc)
         pages.append(secondVc)
