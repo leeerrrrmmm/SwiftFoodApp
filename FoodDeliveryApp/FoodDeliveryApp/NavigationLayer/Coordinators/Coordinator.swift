@@ -43,3 +43,41 @@ protocol CoordinatorFinishDelegate: AnyObject {
     func coordinatorDidFinish(coordinator: CoordinatorProtocol)
 }
 
+protocol TabBarCoordinator: AnyObject, CoordinatorProtocol {
+  var tabBarController: UITabBarController? { get set }
+}
+
+class Coordinator: CoordinatorProtocol {
+    
+    var childCoordinators: [any CoordinatorProtocol]
+    var type: CoordinatorType
+    var navigationController: UINavigationController?
+    var finishDelegate: (any CoordinatorFinishDelegate)?
+    
+    init(childCoordinators: [CoordinatorProtocol] = [CoordinatorProtocol](), type: CoordinatorType, navigationController: UINavigationController, finishDelegate:  CoordinatorFinishDelegate? = nil) {
+        self.childCoordinators = childCoordinators
+        self.type = type
+        self.navigationController = navigationController
+        self.finishDelegate = finishDelegate
+    }
+    
+    
+    deinit {
+        print("Coordinator deinited \(type)")
+        //Удаляем ссылки на завершение делегаций
+        childCoordinators.forEach{ $0.finishDelegate = nil }
+        //Удаляем все координаторы
+        childCoordinators.removeAll()
+        
+    }
+    
+    func start() {
+        print("Coordinator started")
+    }
+    
+    func finish() {
+        print("coordinator finished")
+    }
+    
+    
+}
