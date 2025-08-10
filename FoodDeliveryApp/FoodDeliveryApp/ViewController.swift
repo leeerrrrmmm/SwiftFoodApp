@@ -12,6 +12,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        view.backgroundColor = AppColors.lightGrey
+        
+        
         let label = UILabel()
         label.text = "Hello, World!"
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -24,7 +27,7 @@ class ViewController: UIViewController {
             label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 20),
     ])
         label.font = .Roboto.thin.size(40)
-        label.textColor = .white
+        label.textColor = AppColors.accentOrange
         
      
     }
