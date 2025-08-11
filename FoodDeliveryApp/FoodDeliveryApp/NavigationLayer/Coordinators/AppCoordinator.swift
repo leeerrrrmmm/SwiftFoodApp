@@ -80,6 +80,9 @@ extension AppCoordinator: CoordinatorFinishDelegate {
         removeChildCoordinator(coordinator)
         
         switch coordinator.type {
+        case .onboarding:
+            navigationController?.viewControllers.removeAll()
+            showMainFlow()
         case .app:
             return
         default:

@@ -9,8 +9,9 @@ class OnboardingViewController: UIViewController {
     // MARK: - Views
     private let pageViewController: UIPageViewController
     private let pageControl = UIPageControl()
+    private let bottomButton = UIButton()
     
-    weak var viewOutput: OnboadringViewOutput!
+     var viewOutput: OnboadringViewOutput!
     
     // MARK: - Init
     init(pages: [UIViewController], viewOutput: OnboadringViewOutput) {
@@ -33,6 +34,33 @@ class OnboardingViewController: UIViewController {
         view.backgroundColor = .systemBackground
         setupPageViewController()
         setupPageControl()
+        setupButton()
+        
+        // Обязательно обновляем кнопку и pageControl для первого экрана сразу
+        updateButtonTitle(for: 0)
+        pageControl.currentPage = 0
+    }
+}
+
+//MARK: - Actions
+private extension OnboardingViewController {
+    @objc func buttonPressed() {
+        let nextIndex = pageControl.currentPage + 1
+        
+        if nextIndex < pages.count {
+            pageControl.currentPage = nextIndex
+            pageViewController.setViewControllers([pages[nextIndex]], direction: .forward, animated: true, completion: nil)
+            updateButtonTitle(for: nextIndex)
+        } else {
+            print("Exit or finish onboarding")
+            viewOutput?.onboardingDidFinish() 
+        }
+    }
+    
+    func updateButtonTitle(for index: Int) {
+        if let page = pages[index] as? OnboardingPartViewController {
+            bottomButton.setTitle(page.buttonText, for: .normal)
+        }
     }
 }
 
@@ -66,14 +94,32 @@ private extension OnboardingViewController {
     
     func setupPageControl() {
         pageControl.numberOfPages = pages.count
-        pageControl.currentPage = 0
+        pageControl.isUserInteractionEnabled = false
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(pageControl)
         
         NSLayoutConstraint.activate([
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            pageControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+            pageControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -45)
+        ])
+    }
+    
+    func setupButton() {
+        view.addSubview(bottomButton)
+        
+        bottomButton.translatesAutoresizingMaskIntoConstraints = false
+        bottomButton.backgroundColor = AppColors.lightGrey
+        bottomButton.titleLabel?.font = .Roboto.bold.size(18)
+        bottomButton.setTitleColor(AppColors.black, for: .normal)
+        bottomButton.layer.cornerRadius = 20
+        bottomButton.addTarget(self, action: #selector(buttonPressed), for: .touchUpInside)  // ОБЯЗАТЕЛЬНО
+        
+        NSLayoutConstraint.activate([
+            bottomButton.bottomAnchor.constraint(equalTo: pageControl.topAnchor, constant: -20),
+            bottomButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
+            bottomButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
+            bottomButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
 }
@@ -106,6 +152,7 @@ extension OnboardingViewController: UIPageViewControllerDelegate {
         if completed, let visibleVC = pageViewController.viewControllers?.first,
            let index = pages.firstIndex(of: visibleVC) {
             pageControl.currentPage = index
+            updateButtonTitle(for: index)
         }
     }
 }
