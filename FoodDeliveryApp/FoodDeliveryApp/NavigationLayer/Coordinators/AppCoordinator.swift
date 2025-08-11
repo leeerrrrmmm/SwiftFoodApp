@@ -1,15 +1,21 @@
 import UIKit
 
 class AppCoordinator: Coordinator {
-    
+    //MARK: - Properies
     private let userStorage = UserStorage.shared
+    private let factory = SceneFactory.self
     
     override func start() {
-        if(userStorage.passedOnboarding){
-            showMainFlow()
-        }else{
-            showOnboardingFlow()
-        }
+        //MARK: - как вариант для сброса флага показа основного екрана(вместо этого показать Onboarding ( полезно если пользователь нажал на кнопку: Выйти из аккаунта
+    //userStorage.passedOnboarding = false
+    //или
+    //UserDefaults.standart.removeObject(forKey: в нашем случае'passedOnboarding')
+        showOnboardingFlow()
+//        if(userStorage.passedOnboarding){
+//            showMainFlow()
+//        }else{
+//            showOnboardingFlow()
+//        }
        
         
     }
@@ -24,58 +30,15 @@ private extension AppCoordinator {
     
     func showOnboardingFlow() {
         guard let navigationController = navigationController else { return }
-        
-        let onboardingCoordinator = OnboardingCoordinator(
-            childCoordinators: [],
-            type: .onboarding,
-            navigationController: navigationController,
-            finishDelegate: self
-        )
-        
-        addChildCoordinator(onboardingCoordinator)
-        onboardingCoordinator.start()
+        factory.makeOnboardingFlow(coordinator: self, finishDelegate: self, navigationController: navigationController)
+
     }
     
     func showMainFlow() {
         // Здесь будет MainCoordinator
         guard let navigationController = navigationController else { return }
         
-        let homeNavigationController = UINavigationController()
-        let homeCoordinator = HomeCoordinator(type: .home, navigationController: homeNavigationController)
-        homeNavigationController.tabBarItem = UITabBarItem(title: "Home", image: UIImage.init(systemName: "house"), tag: 0)
-        homeCoordinator.finishDelegate = self
-        homeCoordinator.start()
-        
-        
-        let orderNavigationController = UINavigationController()
-        orderNavigationController.tabBarItem = UITabBarItem(title: "Order", image: UIImage.init(systemName: "cart"), tag: 1)
-        let orderCoordinator = OrderCoordinator(type: .order, navigationController: orderNavigationController)
-        orderCoordinator.finishDelegate = self
-        orderCoordinator.start()
-        
-        
-        let listNavigationController = UINavigationController()
-        listNavigationController.tabBarItem = UITabBarItem(title: "List", image: UIImage.init(systemName: "list.bullet"), tag: 2)
-        let listCoordinator = ListCoordinator(type: .list, navigationController: listNavigationController)
-        listCoordinator.finishDelegate = self
-        listCoordinator.start()
-        
-        let profileNavigationController = UINavigationController()
-        profileNavigationController.tabBarItem = UITabBarItem(title: "Home", image: UIImage.init(systemName: "person.circle"), tag: 3)
-        let profileCoordinator = ProfileCoordinator(type: .profile, navigationController: profileNavigationController)
-        profileCoordinator.finishDelegate = self
-        profileCoordinator.start()
-        
-        
-        addChildCoordinator(homeCoordinator)
-        addChildCoordinator(orderCoordinator)
-        addChildCoordinator(listCoordinator)
-        addChildCoordinator(profileCoordinator)
-        
-        
-        let tabBarControllers = [homeNavigationController, orderNavigationController, listNavigationController, profileNavigationController]
-        
-        let tabBarContoller = TabBarController(tabBarControllers: tabBarControllers)
+        let tabBarContoller = factory.makeMainFlow(coordinator:self,finishDelegate: self)
         
         navigationController.pushViewController(tabBarContoller, animated: true)
         
