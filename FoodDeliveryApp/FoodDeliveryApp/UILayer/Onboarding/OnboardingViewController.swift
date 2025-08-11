@@ -155,4 +155,5 @@ extension OnboardingViewController: UIPageViewControllerDelegate {
             updateButtonTitle(for: index)
         }
     }
+    
 }
